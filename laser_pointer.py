@@ -4,7 +4,7 @@ from datetime import datetime
 from zooming import zoom_factory
 from panning import panhandler
 from clicking import click_handler
-from skimage import data
+from IPython import embed
 
 class laser_pointer:
     def __init__(self, image_path, radius=5, color='red', alpha=.5):
@@ -25,6 +25,7 @@ class laser_pointer:
         self.click_handler.save()
     def save(self, filename):
         self.click_handler.save(filename)
+
 if __name__ == '__main__':
-    plt.ioff()
-    lp = laser_pointer('example-image.jpg')
+#     lp = laser_pointer('example-image.jpg')
+    embed(colors='neutral')
