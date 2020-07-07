@@ -1,61 +1,30 @@
 
 import matplotlib.pyplot as plt
-from skimage import data
-from ipywidgets import Output
-import matplotlib.patches as patches
-from scipy.spatial.distance import cdist
-import numpy as np
-from matplotlib.widgets import Button
 from datetime import datetime
 from zooming import zoom_factory
 from panning import panhandler
+from clicking import click_handler
+from skimage import data
 
-class click_handler:
-    Xs = []
-    Ys = []
-    _circles = []
-    radius = 10
-    def __init__(self, fig, ax, alpha = .5):
-        self.fig = fig
-        self.ax = ax
-        self.callback_id = fig.canvas.mpl_connect('button_press_event', self.callback)
-        self.alpha = alpha
+class laser_pointer:
+    def __init__(self, image_path, radius=5, color='red', alpha=.5):
+        """
+        image_path : str
+            Path to the image to use
+        """
+        self.fig, self.ax = plt.subplots()
+        im = plt.imread(image_path)
+        self.im = self.ax.imshow(im)
+        zoom_factory(self.ax)
+        self.click_handler = click_handler(self.fig, self.ax, radius=radius, color=color, alpha=alpha)
+        self.ph = panhandler(self.fig) # gotta assign to avoid garbage collection
+        self.fig.canvas.mpl_connect('close_event', self._handle_close)
+        plt.show()
         
-    def callback(self, event):
-        if event.button== 1:
-            if event.xdata is not None and event.ydata is not None:
-                self.Xs.append(event.xdata)
-                self.Ys.append(event.ydata)
-                self._circles.append(patches.Circle((event.xdata, event.ydata), radius = self.radius,alpha=self.alpha))
-                self.ax.add_artist(self._circles[-1])
-                self.fig.canvas.draw_idle()
-        elif event.button == 3:
-            # right click - remove closest point
-            if len(self.Xs)>0:
-                points = np.vstack([self.Xs, self.Ys]).T
-                dists = cdist(points,[[event.xdata, event.ydata]])
-                idx = np.argmin(dists)
-                self.Xs.pop(idx)
-                self.Ys.pop(idx)
-                self._circles.pop(idx).remove()
-                self.fig.canvas.draw_idle()
-    def save(self, filename=None):
-        if filename is None:
-            now = datetime.now().isoformat('-','seconds').replace(':','-')
-            filename = f'laser-positions-{now}.csv'
-        print(f'saving as: {filename}')
-        np.savetxt(filename, np.column_stack([self.Xs,self.Ys]), fmt='%s\t%s',header='x\ty')
-
-fig, ax = plt.subplots()
-plt.subplots_adjust(bottom=0.2)
-im = ax.imshow(data.astronaut())
-zoom_factory(ax)
-ch = click_handler(fig, ax)
-ph = panhandler(fig) # gotta assign to avoid garbage collection
-
-def handle_close(evt):
-    ch.save()
-    print('Closed Figure!')
-
-fig.canvas.mpl_connect('close_event', handle_close)
-plt.show()
+    def _handle_close(self, event):
+        self.click_handler.save()
+    def save(self, filename):
+        self.click_handler.save(filename)
+if __name__ == '__main__':
+    plt.ioff()
+    lp = laser_pointer('example-image.jpg')
