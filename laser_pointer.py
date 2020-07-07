@@ -7,6 +7,8 @@ from scipy.spatial.distance import cdist
 import numpy as np
 from matplotlib.widgets import Button
 from datetime import datetime
+from zooming import zoom_factory
+from panning import panhandler
 
 class click_handler:
     Xs = []
@@ -41,11 +43,16 @@ class click_handler:
         if filename is None:
             now = datetime.now().isoformat('-','seconds').replace(':','-')
             filename = f'laser-positions-{now}.csv'
+        print(f'saving as: {filename}')
         np.savetxt(filename, np.column_stack([self.Xs,self.Ys]), fmt='%s\t%s',header='x\ty')
+
 fig, ax = plt.subplots()
 plt.subplots_adjust(bottom=0.2)
 im = ax.imshow(data.astronaut())
+zoom_factory(ax)
 ch = click_handler(fig, ax)
+ph = panhandler(fig) # gotta assign to avoid garbage collection
+
 def handle_close(evt):
     ch.save()
     print('Closed Figure!')
