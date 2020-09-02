@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     install_requires = [
         'matplotlib',
-        'mpl-interactions>=0.5.2'
+        'mpl-interactions>=0.5.3'
     ],
     author          = 'Ian Hunt-Isaak',
     author_email    = 'ianhuntisaak@gmail.com',
