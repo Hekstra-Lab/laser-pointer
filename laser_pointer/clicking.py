@@ -19,7 +19,7 @@ class click_handler:
         
     def callback(self, event):
         if event.button== 1:
-            if event.xdata is not None and event.ydata is not None:
+            if event.xdata is not None and event.ydata is not None and event.inaxes is self.ax:
                 # if  (self.xlims[0] < event.xdata < self.x_lims) and  (0 < event.ydata < self.y_max):
                 self.Xs.append(event.xdata)
                 self.Ys.append(event.ydata)
