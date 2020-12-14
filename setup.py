@@ -12,7 +12,7 @@ setup(
     name="laser_pointer",
     version=version,
     packages=find_packages(),
-    install_requires=["matplotlib", "mpl-interactions>=0.5.3"],
+    install_requires=["matplotlib", "mpl-interactions>=0.5.3", "scipy"],
     author="Ian Hunt-Isaak",
     author_email="ianhuntisaak@gmail.com",
     license="BSD",

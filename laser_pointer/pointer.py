@@ -3,7 +3,6 @@ from datetime import datetime
 import matplotlib.patches as patches
 from .clicking import click_handler
 from mpl_interactions import zoom_factory, panhandler
-from IPython import embed
 import numpy as np
 
 
